@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BeatKey — BPM & Key Detector</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ═══ AUTH OVERLAY ═══════════════════════════════════════ -->
+  <div class="auth-overlay" id="authOverlay">
+    <div class="auth-card" id="authCard">
+
+      <!-- Logo dans la modale -->
+      <div class="auth-logo">Beat<span>Key</span></div>
+      <p class="auth-sub" id="authSub">Connecte-toi pour accéder à BeatKey</p>
+
+      <!-- Tabs -->
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tabLogin" data-tab="login">Connexion</button>
+        <button class="auth-tab" id="tabRegister" data-tab="register">S'enregistrer</button>
+      </div>
+
+      <!-- OAuth -->
+      <div class="auth-oauth">
+        <button class="oauth-btn" id="oauthGoogle">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          <span>Continuer avec Google</span>
+        </button>
+        <button class="oauth-btn" id="oauthApple">
+          <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+          <span>Continuer avec Apple</span>
+        </button>
+      </div>
+
+      <!-- Séparateur -->
+      <div class="auth-sep"><span>ou</span></div>
+
+      <!-- Formulaire login -->
+      <div class="auth-form" id="formLogin">
+        <div class="auth-field">
+          <label>Adresse e-mail</label>
+          <input type="email" id="loginEmail" placeholder="toi@exemple.com" autocomplete="email"/>
+        </div>
+        <div class="auth-field">
+          <label>Mot de passe</label>
+          <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password"/>
+        </div>
+        <p class="auth-forgot" id="forgotLink">Mot de passe oublié ?</p>
+        <button class="auth-submit" id="btnLogin">Se connecter</button>
+        <p class="auth-error" id="loginError"></p>
+      </div>
+
+      <!-- Formulaire register -->
+      <div class="auth-form" id="formRegister" style="display:none">
+        <div class="auth-field">
+          <label>Nom d'utilisateur</label>
+          <input type="text" id="regName" placeholder="DJ Shadow" autocomplete="username"/>
+        </div>
+        <div class="auth-field">
+          <label>Adresse e-mail</label>
+          <input type="email" id="regEmail" placeholder="toi@exemple.com" autocomplete="email"/>
+        </div>
+        <div class="auth-field">
+          <label>Mot de passe</label>
+          <input type="password" id="regPassword" placeholder="Min. 6 caractères" autocomplete="new-password"/>
+        </div>
+        <div class="auth-field">
+          <label>Confirmer le mot de passe</label>
+          <input type="password" id="regPassword2" placeholder="••••••••" autocomplete="new-password"/>
+        </div>
+        <button class="auth-submit" id="btnRegister">Créer mon compte</button>
+        <p class="auth-error" id="registerError"></p>
+      </div>
+
+      <!-- Notice Firebase -->
+      <p class="auth-notice">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        Google &amp; Apple disponibles après hébergement (Firebase)
+      </p>
+
+    </div>
+  </div>
+
+  <!-- ═══ APP ════════════════════════════════════════════════ -->
+  <div class="app-wrap" id="appWrap" style="display:none; width:100%; display:none; flex-direction:column; align-items:center;">
+
+    <!-- HEADER -->
+    <header class="header">
+      <div class="header-top">
+        <div class="logo">Beat<span>Key</span></div>
+        <div class="header-right">
+          <!-- Langue -->
+          <div class="lang-switcher" id="langSwitcher">
+            <button class="lang-btn active" data-lang="fr">FR</button>
+            <button class="lang-btn" data-lang="en">EN</button>
+            <button class="lang-btn" data-lang="es">ES</button>
+            <button class="lang-btn" data-lang="it">IT</button>
+            <button class="lang-btn" data-lang="de">DE</button>
+          </div>
+          <!-- Profil -->
+          <div class="user-menu" id="userMenu">
+            <button class="user-avatar-btn" id="userAvatarBtn">
+              <span class="user-avatar" id="userAvatar">?</span>
+            </button>
+            <div class="user-dropdown" id="userDropdown">
+              <div class="user-dropdown-info">
+                <p class="user-dropdown-name" id="userDropdownName">—</p>
+                <p class="user-dropdown-email" id="userDropdownEmail">—</p>
+              </div>
+              <hr class="dropdown-sep"/>
+              <button class="dropdown-item dropdown-logout" id="btnLogout">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Se déconnecter
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="tagline" data-i18n="tagline">BPM · Tonalité · Identification · Analyse musicale</p>
+    </header>
+
+    <main class="main">
+
+      <!-- CLÉ API AUDD -->
+      <section class="api-section" id="apiSection">
+        <div class="api-saved" id="apiSaved">
+          <div class="api-saved-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+            <span class="api-saved-dot"></span>
+            <span class="api-saved-text" data-i18n="apiConnected">AudD connecté</span>
+          </div>
+          <div class="api-saved-right">
+            <button id="btnEditKey" class="btn-text-action" data-i18n="apiEdit">Modifier</button>
+            <button id="btnClearKey2" class="btn-text-action btn-text-danger" data-i18n="apiDisconnect">Déconnecter</button>
+          </div>
+        </div>
+        <div class="api-inner" id="apiForm">
+          <div class="api-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+            <span data-i18n="apiLabel">Clé API AudD</span> <span class="api-badge" data-i18n="apiIdent">Identification</span>
+          </div>
+          <div class="api-field-wrap">
+            <input type="password" id="apiKeyInput" data-i18n-placeholder="apiPlaceholder" placeholder="Colle ta clé AudD ici…" autocomplete="off" spellcheck="false"/>
+            <button id="btnSaveKey" class="btn-save" data-i18n="apiSave">Sauvegarder</button>
+            <button id="btnCancelEdit" class="btn-clear" style="display:none">✕</button>
+          </div>
+          <p class="api-hint" id="apiHint" data-i18n="apiHint">La clé est stockée uniquement dans ton navigateur.</p>
+        </div>
+      </section>
+
+      <!-- DROP ZONE -->
+      <section class="drop-zone" id="dropZone">
+        <div class="drop-inner">
+          <div class="drop-icon">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="24" cy="24" r="22" stroke="currentColor" stroke-width="2"/>
+              <path d="M24 14v12M18 20l6-6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M16 34h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <p class="drop-title" data-i18n="dropTitle">Dépose ton fichier audio ici</p>
+          <p class="drop-sub">MP3, WAV, FLAC, AAC</p>
+          <label class="btn-upload" for="fileInput" data-i18n="dropBtn">Choisir un fichier</label>
+          <input type="file" id="fileInput" accept="audio/*" hidden />
+        </div>
+      </section>
+
+      <!-- PROGRESSION -->
+      <div class="progress-wrap" id="progressWrap">
+        <div class="progress-bar" id="progressBar"></div>
+        <span class="progress-label" id="progressLabel"></span>
+      </div>
+
+      <!-- RÉSULTATS -->
+      <section class="results" id="results">
+        <div class="result-card" id="cardBPM">
+          <span class="card-label">BPM</span>
+          <span class="card-value" id="bpmValue">—</span>
+          <span class="card-sub" id="bpmSub"></span>
+        </div>
+        <div class="result-card" id="cardKeyEU">
+          <span class="card-label" data-i18n="keyEULabel">Clé européenne</span>
+          <span class="card-value" id="keyEUValue">—</span>
+          <span class="card-sub" id="keyEUSub"></span>
+        </div>
+        <div class="result-card" id="cardKeyUS">
+          <span class="card-label" data-i18n="keyUSLabel">Clé américaine (Camelot)</span>
+          <span class="card-value" id="keyUSValue">—</span>
+          <span class="card-sub" id="keyUSSub" data-i18n="camelotWheel">Roue de Camelot</span>
+        </div>
+      </section>
+
+      <!-- WAVEFORM -->
+      <section class="waveform-section" id="waveformSection">
+        <canvas id="waveformCanvas"></canvas>
+        <div class="player-controls">
+          <button class="btn-play" id="btnPlay">
+            <svg id="iconPlay" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <svg id="iconPause" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+          </button>
+          <div class="time-display">
+            <span id="timeCurrent">0:00</span>
+            <span class="time-sep">/</span>
+            <span id="timeDuration">0:00</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- IDENTIFICATION -->
+      <section class="identify-section" id="identifySection">
+        <div class="identify-loading" id="identifyLoading">
+          <div class="spinner"></div>
+          <span data-i18n="identLoading">Identification via AudD…</span>
+        </div>
+        <div class="identify-result" id="identifyResult">
+          <div class="identify-cover-wrap"><img id="identifyCover" src="" alt="Cover"/></div>
+          <div class="identify-info">
+            <p class="identify-track" id="identifyTrack">—</p>
+            <p class="identify-artist" id="identifyArtist">—</p>
+            <p class="identify-album" id="identifyAlbum">—</p>
+            <div class="identify-tags" id="identifyTags"></div>
+            <div class="identify-links" id="identifyLinks"></div>
+          </div>
+        </div>
+        <div class="identify-notfound" id="identifyNotFound">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35M11 8v6M11 14h.01"/></svg>
+          <span data-i18n="identNotFound">Morceau non identifié par AudD</span>
+        </div>
+        <div class="identify-nokey" id="identifyNoKey">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+          <span data-i18n="identNoKey">Ajoute une clé AudD pour activer l'identification</span>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="footer">
+      <p data-i18n="footer">BeatKey — Analyse locale · Identification via AudD · Aucune donnée stockée</p>
+    </footer>
+
+  </div><!-- /app-wrap -->
+
+  <script>
+  // ═══════════════════════════════════════════════════════════
+  //  I18N
+  // ═══════════════════════════════════════════════════════════
+  const TRANSLATIONS = {
+    fr: {
+      tagline:"BPM · Tonalité · Identification · Analyse musicale",
+      apiConnected:"AudD connecté",apiEdit:"Modifier",apiDisconnect:"Déconnecter",
+      apiLabel:"Clé API AudD",apiIdent:"Identification",apiPlaceholder:"Colle ta clé AudD ici…",
+      apiSave:"Sauvegarder",apiHint:"La clé est stockée uniquement dans ton navigateur. Sans clé, l'identification est désactivée.",
+      dropTitle:"Dépose ton fichier audio ici",dropBtn:"Choisir un fichier",
+      keyEULabel:"Clé européenne",keyUSLabel:"Clé américaine (Camelot)",camelotWheel:"Roue de Camelot",
+      identLoading:"Identification via AudD…",identNotFound:"Morceau non identifié par AudD",
+      identNoKey:"Ajoute une clé AudD pour activer l'identification",
+      footer:"BeatKey — Analyse locale · Identification via AudD · Aucune donnée stockée",
+      progReading:"Lecture du fichier…",progDecoding:"Décodage audio…",progBPM:"Détection du BPM…",
+      progKey:"Analyse de la tonalité…",progFinal:"Finalisation…",progDone:"Analyse terminée !",
+      bpmVerySlow:"Très lent",bpmSlow:"Lent",bpmModerate:"Modéré",bpmFast:"Rapide",bpmVeryFast:"Très rapide",
+      maj:"maj",min:"min",
+      noteNames:{"C":"Do","Db":"Réb","D":"Ré","Eb":"Mib","E":"Mi","F":"Fa","F#":"Fa#","G":"Sol","Ab":"Lab","A":"La","Bb":"Sib","B":"Si"}
+    },
+    en: {
+      tagline:"BPM · Key · Identification · Music Analysis",
+      apiConnected:"AudD connected",apiEdit:"Edit",apiDisconnect:"Disconnect",
+      apiLabel:"AudD API Key",apiIdent:"Identification",apiPlaceholder:"Paste your AudD key here…",
+      apiSave:"Save",apiHint:"The key is stored only in your browser. Without a key, identification is disabled.",
+      dropTitle:"Drop your audio file here",dropBtn:"Choose a file",
+      keyEULabel:"European Key",keyUSLabel:"American Key (Camelot)",camelotWheel:"Camelot Wheel",
+      identLoading:"Identifying via AudD…",identNotFound:"Track not identified by AudD",
+      identNoKey:"Add an AudD key to enable identification",
+      footer:"BeatKey — Local analysis · Identification via AudD · No data stored",
+      progReading:"Reading file…",progDecoding:"Decoding audio…",progBPM:"Detecting BPM…",
+      progKey:"Analysing key…",progFinal:"Finalising…",progDone:"Analysis complete!",
+      bpmVerySlow:"Very slow",bpmSlow:"Slow",bpmModerate:"Moderate",bpmFast:"Fast",bpmVeryFast:"Very fast",
+      maj:"maj",min:"min",
+      noteNames:{"C":"C","Db":"Db","D":"D","Eb":"Eb","E":"E","F":"F","F#":"F#","G":"G","Ab":"Ab","A":"A","Bb":"Bb","B":"B"}
+    },
+    es: {
+      tagline:"BPM · Tonalidad · Identificación · Análisis musical",
+      apiConnected:"AudD conectado",apiEdit:"Editar",apiDisconnect:"Desconectar",
+      apiLabel:"Clave API AudD",apiIdent:"Identificación",apiPlaceholder:"Pega tu clave AudD aquí…",
+      apiSave:"Guardar",apiHint:"La clave se guarda solo en tu navegador. Sin clave, la identificación está desactivada.",
+      dropTitle:"Suelta tu archivo de audio aquí",dropBtn:"Elegir archivo",
+      keyEULabel:"Tonalidad europea",keyUSLabel:"Tonalidad americana (Camelot)",camelotWheel:"Rueda de Camelot",
+      identLoading:"Identificando con AudD…",identNotFound:"Pista no identificada por AudD",
+      identNoKey:"Añade una clave AudD para activar la identificación",
+      footer:"BeatKey — Análisis local · Identificación vía AudD · Sin datos almacenados",
+      progReading:"Leyendo archivo…",progDecoding:"Decodificando audio…",progBPM:"Detectando BPM…",
+      progKey:"Analizando tonalidad…",progFinal:"Finalizando…",progDone:"¡Análisis completado!",
+      bpmVerySlow:"Muy lento",bpmSlow:"Lento",bpmModerate:"Moderado",bpmFast:"Rápido",bpmVeryFast:"Muy rápido",
+      maj:"may",min:"men",
+      noteNames:{"C":"Do","Db":"Reb","D":"Re","Eb":"Mib","E":"Mi","F":"Fa","F#":"Fa#","G":"Sol","Ab":"Lab","A":"La","Bb":"Sib","B":"Si"}
+    },
+    it: {
+      tagline:"BPM · Tonalità · Identificazione · Analisi musicale",
+      apiConnected:"AudD connesso",apiEdit:"Modifica",apiDisconnect:"Disconnetti",
+      apiLabel:"Chiave API AudD",apiIdent:"Identificazione",apiPlaceholder:"Incolla la tua chiave AudD qui…",
+      apiSave:"Salva",apiHint:"La chiave è memorizzata solo nel tuo browser. Senza chiave, l'identificazione è disattivata.",
+      dropTitle:"Trascina il tuo file audio qui",dropBtn:"Scegli un file",
+      keyEULabel:"Tonalità europea",keyUSLabel:"Tonalità americana (Camelot)",camelotWheel:"Ruota di Camelot",
+      identLoading:"Identificazione via AudD…",identNotFound:"Brano non identificato da AudD",
+      identNoKey:"Aggiungi una chiave AudD per attivare l'identificazione",
+      footer:"BeatKey — Analisi locale · Identificazione via AudD · Nessun dato memorizzato",
+      progReading:"Lettura del file…",progDecoding:"Decodifica audio…",progBPM:"Rilevamento BPM…",
+      progKey:"Analisi della tonalità…",progFinal:"Finalizzazione…",progDone:"Analisi completata!",
+      bpmVerySlow:"Molto lento",bpmSlow:"Lento",bpmModerate:"Moderato",bpmFast:"Veloce",bpmVeryFast:"Molto veloce",
+      maj:"mag",min:"min",
+      noteNames:{"C":"Do","Db":"Reb","D":"Re","Eb":"Mib","E":"Mi","F":"Fa","F#":"Fa#","G":"Sol","Ab":"Lab","A":"La","Bb":"Sib","B":"Si"}
+    },
+    de: {
+      tagline:"BPM · Tonart · Identifikation · Musikanalyse",
+      apiConnected:"AudD verbunden",apiEdit:"Bearbeiten",apiDisconnect:"Trennen",
+      apiLabel:"AudD API-Schlüssel",apiIdent:"Identifikation",apiPlaceholder:"AudD-Schlüssel hier einfügen…",
+      apiSave:"Speichern",apiHint:"Der Schlüssel wird nur in deinem Browser gespeichert. Ohne Schlüssel ist die Identifikation deaktiviert.",
+      dropTitle:"Audiodatei hier ablegen",dropBtn:"Datei auswählen",
+      keyEULabel:"Europäische Tonart",keyUSLabel:"Amerikanische Tonart (Camelot)",camelotWheel:"Camelot-Rad",
+      identLoading:"Identifikation via AudD…",identNotFound:"Titel von AudD nicht erkannt",
+      identNoKey:"AudD-Schlüssel hinzufügen, um Identifikation zu aktivieren",
+      footer:"BeatKey — Lokale Analyse · Identifikation via AudD · Keine Daten gespeichert",
+      progReading:"Datei lesen…",progDecoding:"Audio dekodieren…",progBPM:"BPM erkennen…",
+      progKey:"Tonart analysieren…",progFinal:"Abschließen…",progDone:"Analyse abgeschlossen!",
+      bpmVerySlow:"Sehr langsam",bpmSlow:"Langsam",bpmModerate:"Moderat",bpmFast:"Schnell",bpmVeryFast:"Sehr schnell",
+      maj:"Dur",min:"Moll",
+      noteNames:{"C":"C","Db":"Des","D":"D","Eb":"Es","E":"E","F":"F","F#":"Fis","G":"G","Ab":"As","A":"A","Bb":"B","B":"H"}
+    }
+  };
+
+  let currentLang = localStorage.getItem('beatkey_lang') || 'fr';
+  function t(k){ return TRANSLATIONS[currentLang][k] || TRANSLATIONS.fr[k] || k; }
+
+  function applyTranslations(){
+    document.documentElement.lang = currentLang;
+    document.querySelectorAll('[data-i18n]').forEach(el => el.textContent = t(el.dataset.i18n));
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => el.placeholder = t(el.dataset.i18nPlaceholder));
+    document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.lang === currentLang));
+    if(lastBPM !== null) renderBpmSub(lastBPM);
+    if(lastKeyUS !== null) renderKeyResult(lastKeyUS);
+  }
+
+  document.getElementById('langSwitcher').addEventListener('click', e => {
+    const btn = e.target.closest('.lang-btn');
+    if(!btn) return;
+    currentLang = btn.dataset.lang;
+    localStorage.setItem('beatkey_lang', currentLang);
+    applyTranslations();
+  });
+
+  // ═══════════════════════════════════════════════════════════
+  //  AUTH — localStorage simulation
+  // ═══════════════════════════════════════════════════════════
+  const authOverlay = document.getElementById('authOverlay');
+  const appWrap     = document.getElementById('appWrap');
+
+  function getUsers(){ try{ return JSON.parse(localStorage.getItem('beatkey_users')||'{}'); }catch(e){ return {}; } }
+  function saveUsers(u){ localStorage.setItem('beatkey_users', JSON.stringify(u)); }
+  function getCurrentUser(){ try{ return JSON.parse(localStorage.getItem('beatkey_current')||'null'); }catch(e){ return null; } }
+  function setCurrentUser(u){ localStorage.setItem('beatkey_current', JSON.stringify(u)); }
+  function clearCurrentUser(){ localStorage.removeItem('beatkey_current'); }
+
+  function hashSimple(str){
+    // Hash léger côté client — remplacer par bcrypt côté serveur avec Firebase
+    let h = 0;
+    for(let i=0; i<str.length; i++) h = (Math.imul(31, h) + str.charCodeAt(i)) | 0;
+    return h.toString(36);
+  }
+
+  function showApp(user){
+    authOverlay.style.display = 'none';
+    appWrap.style.display = 'flex';
+    // Mettre à jour le profil
+    const initials = user.name ? user.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2) : user.email[0].toUpperCase();
+    document.getElementById('userAvatar').textContent = initials;
+    document.getElementById('userDropdownName').textContent = user.name || 'Utilisateur';
+    document.getElementById('userDropdownEmail').textContent = user.email;
+    applyTranslations();
+  }
+
+  function showAuth(){
+    appWrap.style.display = 'none';
+    authOverlay.style.display = 'flex';
+  }
+
+  // Init : si déjà connecté
+  const existing = getCurrentUser();
+  if(existing){ showApp(existing); } else { showAuth(); }
+
+  // ── Tabs ────────────────────────────────────────────────
+  document.getElementById('tabLogin').addEventListener('click', () => switchTab('login'));
+  document.getElementById('tabRegister').addEventListener('click', () => switchTab('register'));
+
+  function switchTab(tab){
+    document.getElementById('tabLogin').classList.toggle('active', tab==='login');
+    document.getElementById('tabRegister').classList.toggle('active', tab==='register');
+    document.getElementById('formLogin').style.display    = tab==='login'    ? 'flex' : 'none';
+    document.getElementById('formRegister').style.display = tab==='register' ? 'flex' : 'none';
+    document.getElementById('loginError').textContent = '';
+    document.getElementById('registerError').textContent = '';
+  }
+
+  // ── Login ────────────────────────────────────────────────
+  document.getElementById('btnLogin').addEventListener('click', () => {
+    const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+    const pass  = document.getElementById('loginPassword').value;
+    const errEl = document.getElementById('loginError');
+    errEl.textContent = '';
+
+    if(!email || !pass){ errEl.textContent = 'Remplis tous les champs.'; return; }
+    const users = getUsers();
+    const user  = users[email];
+    if(!user){ errEl.textContent = 'Aucun compte trouvé avec cet e-mail.'; return; }
+    if(user.hash !== hashSimple(pass)){ errEl.textContent = 'Mot de passe incorrect.'; return; }
+
+    setCurrentUser({ email, name: user.name });
+    showApp({ email, name: user.name });
+  });
+
+  // ── Register ─────────────────────────────────────────────
+  document.getElementById('btnRegister').addEventListener('click', () => {
+    const name   = document.getElementById('regName').value.trim();
+    const email  = document.getElementById('regEmail').value.trim().toLowerCase();
+    const pass   = document.getElementById('regPassword').value;
+    const pass2  = document.getElementById('regPassword2').value;
+    const errEl  = document.getElementById('registerError');
+    errEl.textContent = '';
+
+    if(!name||!email||!pass||!pass2){ errEl.textContent = 'Remplis tous les champs.'; return; }
+    if(pass.length < 6){ errEl.textContent = 'Le mot de passe doit faire au moins 6 caractères.'; return; }
+    if(pass !== pass2){ errEl.textContent = 'Les mots de passe ne correspondent pas.'; return; }
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ errEl.textContent = 'E-mail invalide.'; return; }
+
+    const users = getUsers();
+    if(users[email]){ errEl.textContent = 'Un compte existe déjà avec cet e-mail.'; return; }
+
+    users[email] = { name, hash: hashSimple(pass) };
+    saveUsers(users);
+    setCurrentUser({ email, name });
+    showApp({ email, name });
+  });
+
+  // ── OAuth (placeholder) ───────────────────────────────────
+  document.getElementById('oauthGoogle').addEventListener('click', () => showOAuthNotice('Google'));
+  document.getElementById('oauthApple').addEventListener('click',  () => showOAuthNotice('Apple'));
+
+  function showOAuthNotice(provider){
+    const notice = document.querySelector('.auth-notice');
+    notice.classList.add('auth-notice--highlight');
+    setTimeout(() => notice.classList.remove('auth-notice--highlight'), 1800);
+  }
+
+  // ── Mot de passe oublié ───────────────────────────────────
+  document.getElementById('forgotLink').addEventListener('click', () => {
+    const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+    const errEl = document.getElementById('loginError');
+    if(!email){ errEl.textContent = 'Entre d'abord ton e-mail.'; return; }
+    errEl.style.color = 'var(--accent)';
+    errEl.textContent = '✓ (Demo) Un e-mail de réinitialisation serait envoyé.';
+    setTimeout(() => { errEl.style.color=''; errEl.textContent=''; }, 3000);
+  });
+
+  // ── Déconnexion ───────────────────────────────────────────
+  document.getElementById('btnLogout').addEventListener('click', () => {
+    clearCurrentUser();
+    document.getElementById('userDropdown').classList.remove('open');
+    showAuth();
+  });
+
+  // ── Dropdown profil ───────────────────────────────────────
+  document.getElementById('userAvatarBtn').addEventListener('click', e => {
+    e.stopPropagation();
+    document.getElementById('userDropdown').classList.toggle('open');
+  });
+  document.addEventListener('click', () => {
+    document.getElementById('userDropdown').classList.remove('open');
+  });
+
+  // ═══════════════════════════════════════════════════════════
+  //  MAPPINGS MUSICAUX
+  // ═══════════════════════════════════════════════════════════
+  const CAMELOT = {
+    "C maj":"8B","Db maj":"3B","D maj":"10B","Eb maj":"5B","E maj":"12B","F maj":"7B",
+    "F# maj":"2B","G maj":"9B","Ab maj":"4B","A maj":"11B","Bb maj":"6B","B maj":"1B",
+    "A min":"8A","Bb min":"3A","B min":"10A","C min":"5A","C# min":"12A","D min":"7A",
+    "Eb min":"2A","E min":"9A","F min":"4A","F# min":"11A","G min":"6A","G# min":"1A"
+  };
+  const NOTE_DISPLAY_MAJ = ["C","Db","D","Eb","E","F","F#","G","Ab","A","Bb","B"];
+  const NOTE_DISPLAY_MIN  = ["C","C#","D","Eb","E","F","F#","G","Ab","A","Bb","B"];
+  const MAJ_PROFILE = [6.35,2.23,3.48,2.33,4.38,4.09,2.52,5.19,2.39,3.66,2.29,2.88];
+  const MIN_PROFILE = [6.33,2.68,3.52,5.38,2.60,3.53,2.54,4.75,3.98,2.69,3.34,3.17];
+
+  function localizeKey(keyUS){
+    const parts=keyUS.split(' '), note=parts[0], mode=parts[1];
+    const lc=TRANSLATIONS[currentLang];
+    return `${lc.noteNames[note]||note} ${lc[mode]||mode}`;
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  //  ALGOS
+  // ═══════════════════════════════════════════════════════════
+  function pearson(a,b){
+    const n=a.length,ma=a.reduce((s,v)=>s+v,0)/n,mb=b.reduce((s,v)=>s+v,0)/n;
+    let num=0,da=0,db=0;
+    for(let i=0;i<n;i++){const x=a[i]-ma,y=b[i]-mb;num+=x*y;da+=x*x;db+=y*y;}
+    return num/Math.sqrt(da*db||1);
+  }
+  function fft(re,im){
+    const n=re.length;
+    for(let i=1,j=0;i<n;i++){let bit=n>>1;for(;j&bit;bit>>=1)j^=bit;j^=bit;if(i<j){[re[i],re[j]]=[re[j],re[i]];[im[i],im[j]]=[im[j],im[i]];}}
+    for(let len=2;len<=n;len<<=1){const ang=-2*Math.PI/len,wRe=Math.cos(ang),wIm=Math.sin(ang);for(let i=0;i<n;i+=len){let cR=1,cI=0;for(let j=0;j<len/2;j++){const uR=re[i+j],uI=im[i+j],vR=re[i+j+len/2]*cR-im[i+j+len/2]*cI,vI=re[i+j+len/2]*cI+im[i+j+len/2]*cR;re[i+j]=uR+vR;im[i+j]=uI+vI;re[i+j+len/2]=uR-vR;im[i+j+len/2]=uI-vI;const nR=cR*wRe-cI*wIm;cI=cR*wIm+cI*wRe;cR=nR;}}}
+  }
+  function getChromagram(buffer,sampleRate){
+    let mono;
+    if(buffer.numberOfChannels>=2){const L=buffer.getChannelData(0),R=buffer.getChannelData(1);mono=new Float32Array(L.length);for(let i=0;i<L.length;i++)mono[i]=(L[i]+R[i])*0.5;}
+    else mono=buffer.getChannelData(0);
+    const N=8192,HOP=2048,chroma=new Float64Array(12),hann=new Float32Array(N);
+    for(let i=0;i<N;i++)hann[i]=0.5*(1-Math.cos(2*Math.PI*i/(N-1)));
+    for(let start=0;start+N<=mono.length;start+=HOP){
+      const re=new Float64Array(N),im=new Float64Array(N);
+      for(let i=0;i<N;i++)re[i]=mono[start+i]*hann[i];
+      fft(re,im);
+      for(let k=1;k<N/2;k++){const freq=k*sampleRate/N;if(freq<27.5||freq>4200)continue;const midi=12*Math.log2(freq/440)+69,nc=((Math.round(midi)%12)+12)%12;chroma[nc]+=Math.sqrt(re[k]*re[k]+im[k]*im[k]);}
+    }
+    let norm=0;for(let i=0;i<12;i++)norm+=chroma[i]*chroma[i];norm=Math.sqrt(norm)||1;
+    return chroma.map(v=>v/norm);
+  }
+  function detectKey(chroma){
+    let best={score:-Infinity,note:0,mode:'maj'};
+    for(let i=0;i<12;i++){
+      const sh=[...chroma.slice(i),...chroma.slice(0,i)];
+      const mj=pearson(sh,MAJ_PROFILE),mn=pearson(sh,MIN_PROFILE);
+      if(mj>best.score)best={score:mj,note:i,mode:'maj'};
+      if(mn>best.score)best={score:mn,note:i,mode:'min'};
+    }
+    return `${best.mode==='maj'?NOTE_DISPLAY_MAJ[best.note]:NOTE_DISPLAY_MIN[best.note]} ${best.mode}`;
+  }
+  function detectBPM(buffer,sampleRate){
+    const T=8000,d=Math.max(1,Math.floor(sampleRate/T));
+    const raw=buffer.getChannelData(0),ds=new Float32Array(Math.floor(raw.length/d));
+    for(let i=0;i<ds.length;i++)ds[i]=raw[i*d];
+    const sr=sampleRate/d,W=Math.round(sr*0.025),H=Math.round(sr*0.010);
+    const energy=[];
+    for(let i=0;i+W<ds.length;i+=H){let e=0;for(let j=i;j<i+W;j++)e+=ds[j]*ds[j];energy.push(e/W);}
+    const onset=new Float64Array(energy.length);
+    for(let i=1;i<energy.length;i++)onset[i]=Math.max(0,energy[i]-energy[i-1]);
+    const maxO=Math.max(...onset)||1;for(let i=0;i<onset.length;i++)onset[i]/=maxO;
+    const ht=H/sr,minL=Math.round(60/(200*ht)),maxL=Math.round(60/(60*ht));
+    const ac=new Float64Array(maxL+1);
+    for(let lag=minL;lag<=maxL;lag++){let s=0;for(let i=0;i+lag<onset.length;i++)s+=onset[i]*onset[i+lag];ac[lag]=s;}
+    let bL=minL,bV=-Infinity;
+    for(let lag=minL;lag<=maxL;lag++){if(ac[lag]>bV){bV=ac[lag];bL=lag;}}
+    let bpm=60/(bL*ht);
+    while(bpm<80&&bpm*2<=185)bpm*=2;while(bpm>185&&bpm/2>=80)bpm/=2;
+    return Math.round(bpm);
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  //  AUDD
+  // ═══════════════════════════════════════════════════════════
+  async function identifyWithAudd(file,apiKey){
+    const ab=await file.arrayBuffer();
+    const tmp=new(window.AudioContext||window.webkitAudioContext)();
+    const dec=await tmp.decodeAudioData(ab);tmp.close();
+    const sr=dec.sampleRate,tot=dec.length,nCh=dec.numberOfChannels;
+    const ss=Math.min(30*sr,Math.floor(tot*0.2)),es=Math.min(ss+20*sr,tot);
+    const off=new OfflineAudioContext(nCh,es-ss,sr);
+    const src=off.createBufferSource();
+    const seg=new AudioBuffer({numberOfChannels:nCh,length:es-ss,sampleRate:sr});
+    for(let c=0;c<nCh;c++)seg.copyToChannel(dec.getChannelData(c).slice(ss,es),c);
+    src.buffer=seg;src.connect(off.destination);src.start();
+    const ren=await off.startRendering();
+    const wav=audioBufferToWavBlob(ren);
+    const fd=new FormData();
+    fd.append('api_token',apiKey);fd.append('file',wav,'sample.wav');fd.append('return','spotify,apple_music,deezer');
+    const r=await fetch('https://api.audd.io/',{method:'POST',body:fd});
+    if(!r.ok)throw new Error('AudD '+r.status);
+    return r.json();
+  }
+  function audioBufferToWavBlob(buf){
+    const nCh=buf.numberOfChannels,sr=buf.sampleRate,len=buf.length;
+    const ab=new ArrayBuffer(44+len*nCh*2),v=new DataView(ab);
+    const ws=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i));};
+    ws(0,'RIFF');v.setUint32(4,36+len*nCh*2,true);ws(8,'WAVE');ws(12,'fmt ');
+    v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,nCh,true);
+    v.setUint32(24,sr,true);v.setUint32(28,sr*nCh*2,true);v.setUint16(32,nCh*2,true);v.setUint16(34,16,true);
+    ws(36,'data');v.setUint32(40,len*nCh*2,true);
+    let off=44;
+    for(let i=0;i<len;i++)for(let c=0;c<nCh;c++){const s=Math.max(-1,Math.min(1,buf.getChannelData(c)[i]));v.setInt16(off,s<0?s*0x8000:s*0x7FFF,true);off+=2;}
+    return new Blob([ab],{type:'audio/wav'});
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  //  UI APP
+  // ═══════════════════════════════════════════════════════════
+  const dropZone        = document.getElementById('dropZone');
+  const fileInput       = document.getElementById('fileInput');
+  const progressWrap    = document.getElementById('progressWrap');
+  const progressBar     = document.getElementById('progressBar');
+  const progressLabel   = document.getElementById('progressLabel');
+  const results         = document.getElementById('results');
+  const waveformSection = document.getElementById('waveformSection');
+  const canvas          = document.getElementById('waveformCanvas');
+  const btnPlay         = document.getElementById('btnPlay');
+  const timeCurrent     = document.getElementById('timeCurrent');
+  const timeDuration    = document.getElementById('timeDuration');
+  const identifySection = document.getElementById('identifySection');
+  const apiKeyInput     = document.getElementById('apiKeyInput');
+  const btnSaveKey      = document.getElementById('btnSaveKey');
+  const btnCancelEdit   = document.getElementById('btnCancelEdit');
+  const apiSaved        = document.getElementById('apiSaved');
+  const apiForm         = document.getElementById('apiForm');
+
+  let audioCtx,audioSource,audioBuffer,animFrame;
+  let isPlaying=false,startTime=0,pauseOffset=0;
+  let lastBPM=null,lastKeyUS=null;
+
+  // ── API Key ─────────────────────────────────────────────
+  function getApiKey(){ return localStorage.getItem('beatkey_audd')||''; }
+  function refreshApiUI(forceEdit=false){
+    const k=getApiKey();
+    if(k&&!forceEdit){apiSaved.style.display='flex';apiForm.style.display='none';}
+    else{apiSaved.style.display='none';apiForm.style.display='flex';btnCancelEdit.style.display=(k&&forceEdit)?'':'none';apiKeyInput.value='';apiKeyInput.focus();}
+  }
+  btnSaveKey.addEventListener('click',()=>{const v=apiKeyInput.value.trim();if(!v)return;localStorage.setItem('beatkey_audd',v);refreshApiUI();});
+  apiKeyInput.addEventListener('keydown',e=>{if(e.key==='Enter')btnSaveKey.click();});
+  document.getElementById('btnEditKey').addEventListener('click',()=>refreshApiUI(true));
+  document.getElementById('btnClearKey2').addEventListener('click',()=>{localStorage.removeItem('beatkey_audd');refreshApiUI();});
+  btnCancelEdit.addEventListener('click',()=>refreshApiUI(false));
+  refreshApiUI();
+
+  // ── Identify states ─────────────────────────────────────
+  function showIdentifyState(s){
+    identifySection.style.display='flex';
+    document.getElementById('identifyLoading').style.display  =s==='loading' ?'flex':'none';
+    document.getElementById('identifyResult').style.display   =s==='result'  ?'flex':'none';
+    document.getElementById('identifyNotFound').style.display =s==='notfound'?'flex':'none';
+    document.getElementById('identifyNoKey').style.display    =s==='nokey'   ?'flex':'none';
+  }
+  function renderIdentifyResult(data){
+    const r=data.result;
+    document.getElementById('identifyTrack').textContent  = r.title||'—';
+    document.getElementById('identifyArtist').textContent = r.artist||'—';
+    document.getElementById('identifyAlbum').textContent  = r.album||'';
+    const cov=document.getElementById('identifyCover');
+    const img=r.spotify?.album?.images?.[0]?.url||r.apple_music?.artwork?.url?.replace('{w}','300').replace('{h}','300')||'';
+    if(img){cov.src=img;cov.style.display='block';}else cov.style.display='none';
+    const te=document.getElementById('identifyTags');te.innerHTML='';
+    [r.spotify?.album?.release_date?.slice(0,4),r.spotify?.album?.album_type].forEach(v=>{if(v){const t=document.createElement('span');t.className='id-tag';t.textContent=v;te.appendChild(t);}});
+    const le=document.getElementById('identifyLinks');le.innerHTML='';
+    const al=(lbl,url,ico)=>{if(!url)return;const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';a.className='id-link';a.innerHTML=`${ico}<span>${lbl}</span>`;le.appendChild(a);};
+    al('Spotify',r.spotify?.external_urls?.spotify,'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424a.622.622 0 0 1-.857.207c-2.348-1.435-5.304-1.76-8.785-.964a.623.623 0 0 1-.277-1.215c3.809-.87 7.077-.496 9.712 1.115a.623.623 0 0 1 .207.857zm1.223-2.722a.78.78 0 0 1-1.072.257c-2.687-1.652-6.786-2.131-9.965-1.166a.78.78 0 0 1-.973-.519.781.781 0 0 1 .519-.972c3.632-1.102 8.147-.568 11.234 1.328a.78.78 0 0 1 .257 1.072zm.105-2.835C14.692 8.95 9.375 8.775 6.297 9.71a.937.937 0 0 1-.583-1.782c3.532-1.157 9.404-.933 13.115 1.338a.937.937 0 0 1-.915 1.6z"/></svg>');
+    al('Apple Music',r.apple_music?.url,'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.994 6.124a9.23 9.23 0 0 0-.23-2.334c-.31-1.327-1.065-2.373-2.17-3.062A5.84 5.84 0 0 0 19.5.077c-.539-.07-1.082-.073-1.624-.08H6.124c-.535 0-1.07.015-1.604.077A5.87 5.87 0 0 0 2.23.692C1.125 1.38.37 2.427.06 3.754a9.238 9.238 0 0 0-.23 2.248L-.17 6v12c0 .54.008 1.082.077 1.624.238 1.988 1.314 3.4 3.198 4.03.54.18 1.092.268 1.661.292.606.022 1.213.028 1.82.028H18.2c.607 0 1.214-.006 1.82-.028.569-.024 1.12-.112 1.662-.293 1.884-.63 2.96-2.042 3.198-4.03.07-.542.077-1.085.077-1.624V6l.037-.124zM9.01 17.063V8.53L17.5 12.8l-8.49 4.263z"/></svg>');
+    al('Deezer',r.deezer?.link,'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.81 11.683H24v2.223h-5.19zM18.81 8.094H24v2.224h-5.19zm0 7.177H24v2.224h-5.19zM0 15.27h5.19v2.225H0zm6.405 0h5.19v2.225h-5.19zm6.405 0H18v2.225h-5.19zM6.405 11.683h5.19v2.223h-5.19zm6.405 0H18v2.223h-5.19zM12.81 8.094H18v2.224h-5.19zM6.405 8.094h5.19v2.224h-5.19z"/></svg>');
+    showIdentifyState('result');
+  }
+
+  // ── Helpers ─────────────────────────────────────────────
+  function formatTime(s){ return `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`; }
+  function setProgress(p,l){ progressBar.style.width=p+'%'; progressLabel.textContent=l; }
+  function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+  function renderBpmSub(bpm){ document.getElementById('bpmSub').textContent=bpm<80?t('bpmVerySlow'):bpm<110?t('bpmSlow'):bpm<130?t('bpmModerate'):bpm<160?t('bpmFast'):t('bpmVeryFast'); }
+  function renderKeyResult(keyUS){ document.getElementById('keyEUValue').textContent=localizeKey(keyUS);document.getElementById('keyEUSub').textContent=keyUS;document.getElementById('keyUSValue').textContent=CAMELOT[keyUS]||'—';document.getElementById('keyUSSub').textContent=t('camelotWheel'); }
+
+  function stopPlayer(){
+    if(isPlaying&&audioSource){try{audioSource.stop();}catch(e){}}
+    isPlaying=false;pauseOffset=0;cancelAnimationFrame(animFrame);
+    document.getElementById('iconPlay').style.display='';document.getElementById('iconPause').style.display='none';
+    timeCurrent.textContent='0:00';
+  }
+
+  // ── Analyse ─────────────────────────────────────────────
+  async function analyzeFile(file){
+    progressWrap.classList.add('visible');results.classList.remove('visible');
+    waveformSection.classList.remove('visible');identifySection.style.display='none';
+    setProgress(10,t('progReading'));
+    const ab=await file.arrayBuffer();
+    setProgress(30,t('progDecoding'));
+    if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+    audioBuffer=await audioCtx.decodeAudioData(ab.slice(0));
+    setProgress(50,t('progBPM'));await sleep(20);
+    lastBPM=detectBPM(audioBuffer,audioBuffer.sampleRate);
+    setProgress(72,t('progKey'));await sleep(20);
+    const chroma=getChromagram(audioBuffer,audioBuffer.sampleRate);
+    lastKeyUS=detectKey(chroma);
+    setProgress(90,t('progFinal'));await sleep(100);
+    document.getElementById('bpmValue').textContent=lastBPM;
+    renderBpmSub(lastBPM);renderKeyResult(lastKeyUS);
+    setProgress(100,t('progDone'));await sleep(200);
+    progressWrap.classList.remove('visible');results.classList.add('visible');
+    drawWaveform(audioBuffer);waveformSection.classList.add('visible');
+    timeDuration.textContent=formatTime(audioBuffer.duration);
+    const apiKey=getApiKey();
+    if(!apiKey){showIdentifyState('nokey');}
+    else{
+      showIdentifyState('loading');
+      try{const data=await identifyWithAudd(file,apiKey);if(data.status==='success'&&data.result)renderIdentifyResult(data);else showIdentifyState('notfound');}
+      catch(err){console.error('AudD:',err);showIdentifyState('notfound');}
+    }
+  }
+
+  function drawWaveform(buffer){
+    const data=buffer.getChannelData(0),W=canvas.parentElement.offsetWidth||800,H=80;
+    canvas.width=W;canvas.height=H;
+    const ctx=canvas.getContext('2d'),step=Math.ceil(data.length/W);
+    const g=ctx.createLinearGradient(0,0,W,0);
+    g.addColorStop(0,'#00e5a0');g.addColorStop(0.5,'#00b8ff');g.addColorStop(1,'#00e5a0');
+    ctx.strokeStyle=g;ctx.lineWidth=1.5;ctx.beginPath();
+    for(let i=0;i<W;i++){let mn=1,mx=-1;for(let j=0;j<step;j++){const v=data[i*step+j]||0;if(v<mn)mn=v;if(v>mx)mx=v;}ctx.moveTo(i,(1+mn)/2*H);ctx.lineTo(i,(1+mx)/2*H);}
+    ctx.stroke();
+  }
+
+  btnPlay.addEventListener('click',()=>{
+    if(!audioBuffer)return;
+    if(isPlaying){pauseOffset+=audioCtx.currentTime-startTime;audioSource.stop();isPlaying=false;document.getElementById('iconPlay').style.display='';document.getElementById('iconPause').style.display='none';cancelAnimationFrame(animFrame);}
+    else{audioSource=audioCtx.createBufferSource();audioSource.buffer=audioBuffer;audioSource.connect(audioCtx.destination);audioSource.start(0,pauseOffset);startTime=audioCtx.currentTime;isPlaying=true;document.getElementById('iconPlay').style.display='none';document.getElementById('iconPause').style.display='';audioSource.onended=()=>{if(isPlaying){isPlaying=false;pauseOffset=0;document.getElementById('iconPlay').style.display='';document.getElementById('iconPause').style.display='none';}};tick();}
+  });
+  function tick(){if(!isPlaying)return;timeCurrent.textContent=formatTime(Math.min(pauseOffset+audioCtx.currentTime-startTime,audioBuffer.duration));animFrame=requestAnimationFrame(tick);}
+
+  dropZone.addEventListener('dragover',e=>{e.preventDefault();dropZone.classList.add('drag-over');});
+  dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('drag-over'));
+  dropZone.addEventListener('drop',e=>{e.preventDefault();dropZone.classList.remove('drag-over');const f=e.dataTransfer.files[0];if(f&&f.type.startsWith('audio/')){stopPlayer();analyzeFile(f);}});
+  fileInput.addEventListener('change',e=>{if(e.target.files[0]){stopPlayer();analyzeFile(e.target.files[0]);}e.target.value='';});
+
+  applyTranslations();
+  </script>
+</body>
+</html>
