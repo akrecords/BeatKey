@@ -1,2 +1,2 @@
 # BeatKey
-Bpm/key detector and song reconize option
+BeatKey is a beat and key detector. I've added an option with an AuDD API to perform sound recognition on your instrumentals, to check, for example, if a sample you've selected has already been used by other artists/beatmakers. You can enter your AuDD key if you have a license, and it will be saved locally on your machine, so I won't have access to it. No ads, no subscription, and the option to log in to save your searches (samples, beats, and keys). This is just a project for now, so there may be bugs; feel free to report them to me.
